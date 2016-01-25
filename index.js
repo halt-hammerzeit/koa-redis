@@ -149,6 +149,15 @@ RedisStore.prototype.destroy = function *(sid) {
   debug('DEL %s complete', sid);
 };
 
+RedisStore.prototype.bump = function *(sid, ttl) {
+  if (typeof ttl === 'number') {
+    ttl = Math.ceil(ttl / 1000);
+  }
+  debug('EXPIRE %s %s', sid, ttl);
+  yield this.client.expire(sid, ttl);
+  debug('EXPIRE %s %s complete', sid, ttl);
+};
+
 RedisStore.prototype.quit = function* () {                         // End connection SAFELY
   debug('quitting redis client');
   yield this.client.quit();
